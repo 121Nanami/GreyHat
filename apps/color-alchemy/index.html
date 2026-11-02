@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Color Alchemy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Manrope:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  body{margin:0;min-height:100vh;font-family:Manrope,sans-serif;background:#111;color:#faf7f2;display:flex;flex-direction:column}
+  header{padding:1.5rem 2rem} h1{font-family:Syne,sans-serif;font-size:clamp(1.8rem,5vw,3rem);margin:0;letter-spacing:-.03em}
+  .row{display:flex;flex:1;min-height:50vh}
+  .swatch{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:1.2rem;cursor:pointer;transition:flex .35s ease;position:relative}
+  .swatch:hover{flex:1.25}
+  .meta{background:#0008;backdrop-filter:blur(6px);padding:.8rem;border-radius:10px;font-size:.85rem}
+  .meta code{font-size:1rem} .locked{outline:2px solid #fff;outline-offset:-8px}
+  .tools{padding:1rem 2rem 2rem;display:flex;gap:.6rem;flex-wrap:wrap}
+  button{font:600 .9rem Manrope,sans-serif;border:0;padding:.65rem 1.1rem;border-radius:8px;background:#faf7f2;color:#111;cursor:pointer}
+  button.ghost{background:transparent;color:#faf7f2;border:1px solid #faf7f244}
+</style>
+</head>
+<body>
+<header><h1>Color Alchemy</h1></header>
+<div class="row" id="row"></div>
+<div class="tools">
+  <button id="brew">Brew palette</button>
+  <button class="ghost" id="copy">Copy CSS vars</button>
+  <button class="ghost" id="export">Export JSON</button>
+</div>
+<script>
+const N=5; let colors=[], locks=Array(N).fill(false);
+const row=document.getElementById('row');
+function rand(){return '#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')}
+function contrast(hex){const n=parseInt(hex.slice(1),16);const r=(n>>16)&255,g=(n>>8)&255,b=n&255;return (r*299+g*587+b*114)/1000>150?'#111':'#faf7f2'}
+function brew(){colors=colors.length?colors.map((c,i)=>locks[i]?c:rand()):Array.from({length:N},rand);render()}
+function render(){
+  row.innerHTML='';colors.forEach((c,i)=>{
+    const d=document.createElement('div');d.className='swatch'+(locks[i]?' locked':'');d.style.background=c;d.style.color=contrast(c);
+    d.innerHTML=`<div class="meta"><div><code>${c}</code></div><div>${locks[i]?'🔒 locked':'tap to lock'}</div></div>`;
+    d.onclick=()=>{locks[i]=!locks[i];render()};row.appendChild(d);
+  });
+  document.body.style.background=`linear-gradient(120deg,${colors.join(',')})`;
+}
+document.getElementById('brew').onclick=brew;
+document.getElementById('copy').onclick=()=>{const css=colors.map((c,i)=>`  --c${i+1}: ${c};`).join('\\n');navigator.clipboard.writeText(`:root{\\n${css}\\n}`);};
+document.getElementById('export').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(colors,null,2)],{type:'application/json'}));a.download='palette.json';a.click()};
+addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();brew()}});
+brew();
+</script>
+</body></html>

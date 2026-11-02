@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Privacy Defaults Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f4f0e8;--ink:#1c1915;--muted:#6b6458;--ok:#2f6b4f;--line:#ddd4c4;--card:#fffdf8}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:radial-gradient(900px 500px at 100% 0%,#e7dfd0,transparent),var(--bg);color:var(--ink);font-family:'Source Sans 3',sans-serif;padding:2rem}
+h1{font-family:Fraunces,serif;font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:.35rem}
+.sub{color:var(--muted);max-width:36rem;margin-bottom:1.5rem;line-height:1.5}
+.list{max-width:640px;display:flex;flex-direction:column;gap:.55rem}
+.item{display:flex;gap:.8rem;align-items:flex-start;background:var(--card);border:1px solid var(--line);padding:.85rem 1rem;cursor:pointer}
+.item input{margin-top:.25rem;accent-color:var(--ok);width:1.1rem;height:1.1rem}
+.item.done .txt{text-decoration:line-through;opacity:.55}
+.name{font-weight:600}
+.hint{display:block;color:var(--muted);font-size:.85rem;margin-top:.2rem;line-height:1.4}
+.bar{max-width:640px;margin:1rem 0 1.25rem;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+.meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem}
+button{font:inherit;margin-top:1rem;padding:.5rem .9rem;border:1px solid var(--line);background:var(--card);cursor:pointer}
+</style>
+</head>
+<body>
+<h1>Privacy defaults</h1>
+<p class="sub">Day-one checklist for a consumer-friendly Arch spin. Stored locally in your browser — guidance only.</p>
+<div class="meta" id="meta">0 / 0</div>
+<div class="bar"><i id="fill"></i></div>
+<div class="list" id="list"></div>
+<button type="button" id="reset">Reset</button>
+<script>
+const KEY='ghi-privacy-defaults-v1';
+const items=[
+  ['hostname','Set a boring hostname (not your real name)'],
+  ['user','Create a daily user; avoid living as root'],
+  ['fw','Enable a deny-inbound firewall profile'],
+  ['updates','Turn on update notifier / unattended security tips'],
+  ['browser','Ship browser with HTTPS-first + tracker basics'],
+  ['ext','Audit preinstalled extensions; drop unused ones'],
+  ['cam','Confirm camera/mic permission prompts default ask'],
+  ['thumb','Consider disabling thumbnailers for untrusted media dirs'],
+  ['swap','If using swap, prefer encrypted swap on laptops'],
+  ['logs','Keep journald retention modest on shared machines'],
+  ['backup','Point users at a backup how-to before storing secrets'],
+  ['telemetry','Disable optional crash/telemetry services by default'],
+];
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+const list=document.getElementById('list');
+function save(){localStorage.setItem(KEY,JSON.stringify(state));sync()}
+function sync(){
+  const n=items.length,d=items.filter(([id])=>state[id]).length;
+  document.getElementById('meta').textContent=`${d} / ${n} complete`;
+  document.getElementById('fill').style.width=(100*d/n)+'%';
+}
+function render(){
+  list.innerHTML='';
+  items.forEach(([id,label])=>{
+    const el=document.createElement('label');el.className='item'+(state[id]?' done':'');
+    el.innerHTML=`<input type="checkbox" ${state[id]?'checked':''}/><span class="txt"><span class="name">${label}</span><span class="hint">id: ${id}</span></span>`;
+    el.querySelector('input').onchange=e=>{state[id]=e.target.checked;el.classList.toggle('done',state[id]);save()};
+    list.appendChild(el);
+  });
+  sync();
+}
+document.getElementById('reset').onclick=()=>{state={};save();render()};
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+name: greyhat
+version: 1
+features:
+  - checksum
+  - mirrors
+  - firstboot
+nested:
+  on: true
+  count: 3

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Regex Lab Bench</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0f1115;--panel:#181b22;--ink:#e6e8ee;--muted:#8b91a1;--ok:#5dcea0;--bad:#ff6b6b;--acc:#7aa2ff}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;padding:1.25rem;display:grid;gap:1rem;grid-template-rows:auto auto 1fr}
+h1{font-size:1.15rem;font-weight:500}
+label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:.35rem}
+input,textarea{width:100%;background:var(--panel);border:1px solid #2a2f3c;color:var(--ink);font-family:'IBM Plex Mono',monospace;padding:.65rem .7rem;border-radius:3px}
+textarea{min-height:220px;resize:vertical;line-height:1.45}
+.row{display:grid;gap:.75rem;grid-template-columns:1fr auto}
+.flags{display:flex;gap:.6rem;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:var(--muted)}
+#status{font-family:'IBM Plex Mono',monospace;font-size:.85rem}
+#status.bad{color:var(--bad)}#status.ok{color:var(--ok)}
+mark{background:#7aa2ff55;color:inherit;padding:0 .1em}
+pre{background:var(--panel);border:1px solid #2a2f3c;padding:.75rem;font-family:'IBM Plex Mono',monospace;font-size:.82rem;overflow:auto;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>Regex Lab Bench</h1>
+<div>
+  <label>Pattern</label>
+  <div class="row">
+    <input id="pat" value="\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b" spellcheck="false"/>
+    <div class="flags">
+      <label><input type="checkbox" id="i" checked/> i</label>
+      <label><input type="checkbox" id="m"/> m</label>
+      <label><input type="checkbox" id="s"/> s</label>
+      <label><input type="checkbox" id="g" checked/> g</label>
+    </div>
+  </div>
+  <div id="status" class="ok" style="margin-top:.5rem">ready</div>
+</div>
+<div style="display:grid;gap:1rem;grid-template-columns:1fr 1fr">
+  <div>
+    <label>Test text</label>
+    <textarea id="text">Contact ops@greyhat.local or root@example.com
+not-an-email
+user.name+tag@domain.co.uk</textarea>
+  </div>
+  <div>
+    <label>Matches</label>
+    <pre id="out"></pre>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function run(){
+  const flags=[...['i','m','s','g']].filter(f=>$(f).checked).join('');
+  let re;
+  try{re=new RegExp($('pat').value,flags);$('status').textContent='ok /'+flags;$('status').className='ok'}
+  catch(e){$('status').textContent=String(e.message);$('status').className='bad';$('out').textContent='';return}
+  const text=$('text').value;const matches=[...text.matchAll(re)];
+  $('out').textContent=matches.length?matches.map((m,i)=>`#${i} index ${m.index}: ${JSON.stringify(m[0])}${m.length>1?'\\n   groups: '+JSON.stringify(m.slice(1)):''}`).join('\\n\\n'):'(no matches)';
+}
+['pat','text','i','m','s','g'].forEach(id=>$(id).addEventListener('input',run));
+run();
+</script>
+</body>
+</html>

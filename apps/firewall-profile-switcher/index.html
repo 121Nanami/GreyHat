@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Firewall Profile Switcher</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b1210;--panel:#12201a;--ink:#d8f3e0;--accent:#3dd68c;--warn:#f0b429;--muted:#6b8f7a}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:radial-gradient(1200px 600px at 20% -10%,#1a3a2c,transparent),linear-gradient(160deg,#07100c,#0b1210 50%,#0e1a14);color:var(--ink);font-family:'IBM Plex Mono',monospace;padding:2rem}
+h1{font-family:Syne,sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.04em;margin-bottom:.35rem}
+.sub{color:var(--muted);margin-bottom:1.5rem;max-width:40rem;line-height:1.5}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));max-width:900px}
+.card{background:var(--panel);border:1px solid #1f3b2e;padding:1.1rem 1.2rem;cursor:pointer;transition:.2s;border-radius:2px}
+.card:hover{border-color:var(--accent)}
+.card.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 12px 40px #3dd68c22}
+.card h2{font-family:Syne,sans-serif;font-size:1.05rem;margin-bottom:.4rem}
+.card p{font-size:.78rem;color:var(--muted);line-height:1.45}
+.badge{display:inline-block;margin-top:.7rem;font-size:.7rem;color:var(--accent);letter-spacing:.08em}
+#status{margin-top:1.5rem;padding:1rem;border-left:3px solid var(--accent);background:#0f1c16;max-width:900px;font-size:.85rem;line-height:1.5}
+.note{margin-top:1rem;color:var(--warn);font-size:.75rem;max-width:900px}
+</style>
+</head>
+<body>
+<h1>Firewall Profile Switcher</h1>
+<p class="sub">UI mock for an Ellen-spin first-class firewall chooser. Selecting a profile only previews nftables/ufw-style intent — nothing is applied from this page.</p>
+<div class="grid" id="grid"></div>
+<div id="status">Select a profile to preview policy intent.</div>
+<p class="note">Demo only · no privileges · no rules written</p>
+<script>
+const profiles=[
+  {id:'home',name:'Home Quiet',desc:'Outbound open; inbound deny except established. Good default for a daily-driver spin.',lines:['policy input drop','policy forward drop','policy output accept','allow established/related','allow loopback']},
+  {id:'cafe',name:'Cafe Lockdown',desc:'Same as home plus DNS/HTTPS-only outbound suggestion and no LAN discovery.',lines:['input drop','output allow 53,80,443','block mDNS/SSDP','no SSH inbound']},
+  {id:'lab',name:'Lab LAN',desc:'Trusted subnet can reach SSH and a local web UI; still drop WAN inbound.',lines:['allow 22 from 192.168.0.0/16','allow 8080 from LAN','WAN inbound drop']},
+  {id:'travel',name:'Travel Paranoid',desc:'Minimal surface: DNS+HTTPS out, drop everything else including ICMP echo.',lines:['output 53/443 only','drop ICMP echo-request','no IPv6 if unused']},
+];
+let cur=null;
+const grid=document.getElementById('grid'),status=document.getElementById('status');
+profiles.forEach(p=>{
+  const el=document.createElement('div');el.className='card';el.innerHTML=`<h2>${p.name}</h2><p>${p.desc}</p><span class="badge">PREVIEW</span>`;
+  el.onclick=()=>{
+    cur=p.id;document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));el.classList.add('active');
+    status.innerHTML=`<strong>${p.name}</strong> — intended rules (not applied):<br>`+p.lines.map(l=>'· '+l).join('<br>');
+  };
+  grid.appendChild(el);
+});
+</script>
+</body>
+</html>

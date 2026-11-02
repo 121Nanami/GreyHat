@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Firstboot Cove</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{--deep:#061820;--foam:#dff3f7;--accent:#7ec8c8;--ink:#0b2430}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:'Nunito Sans',sans-serif;color:var(--foam);
+    background:radial-gradient(900px 500px at 80% -10%,#1a4a55,var(--deep));display:grid;place-items:center;padding:1.5rem}
+  .shell{width:min(440px,100%);background:#0a283299;border:1px solid #7ec8c833;border-radius:18px;padding:1.6rem;backdrop-filter:blur(10px);
+    box-shadow:0 30px 60px #0006}
+  h1{font-family:Fraunces,serif;margin:0 0 .3rem;font-size:1.9rem}
+  .step-label{opacity:.65;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem}
+  label{display:block;font-size:.85rem;opacity:.8;margin:.8rem 0 .3rem}
+  input,select{width:100%;padding:.7rem .8rem;border-radius:10px;border:1px solid #7ec8c844;background:#061820;color:var(--foam);font:1rem 'Nunito Sans',sans-serif}
+  .row{display:flex;gap:.5rem;margin-top:1.4rem}
+  button{flex:1;border:0;padding:.75rem;border-radius:999px;font:700 .95rem 'Nunito Sans',sans-serif;cursor:pointer}
+  .next{background:var(--accent);color:var(--ink)} .back{background:transparent;color:var(--foam);border:1px solid #7ec8c855}
+  .dots{display:flex;gap:.35rem;margin-bottom:1rem} .dots i{width:8px;height:8px;border-radius:50%;background:#7ec8c833}
+  .dots i.on{background:var(--accent)}
+  .done h2{font-family:Fraunces,serif;margin:0 0 .6rem}
+  .summary{font-size:.95rem;line-height:1.5;opacity:.85}
+</style>
+</head>
+<body>
+<div class="shell" id="app"></div>
+<script>
+const state={name:'Captain',locale:'en_US.UTF-8',tz:'America/Los_Angeles',theme:'Abyss Teal',updates:'security-auto'};
+const steps=['welcome','identity','locale','defaults','finish'];
+let i=0;
+function render(){
+  const app=document.getElementById('app');
+  const dots=steps.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');
+  if(steps[i]==='welcome'){
+    app.innerHTML=`<div class="dots">${dots}</div><div class="step-label">Firstboot Cove · 1/${steps.length}</div>
+      <h1>Welcome aboard</h1>
+      <p style="opacity:.75;line-height:1.45">Mock first-boot wizard for an Ellen Joe–themed BlackArch spin — safer defaults, calmer ocean.</p>
+      <div class="row"><button class="next" id="n">Cast off</button></div>`;
+  } else if(steps[i]==='identity'){
+    app.innerHTML=`<div class="dots">${dots}</div><div class="step-label">Identity</div><h1>Call sign</h1>
+      <label>Display name</label><input id="name" value="${state.name}"/>
+      <div class="row"><button class="back" id="b">Back</button><button class="next" id="n">Next</button></div>`;
+    document.getElementById('name').oninput=e=>state.name=e.target.value;
+  } else if(steps[i]==='locale'){
+    app.innerHTML=`<div class="dots">${dots}</div><div class="step-label">Locale</div><h1>Where is the cove?</h1>
+      <label>Locale</label><select id="loc"><option>en_US.UTF-8</option><option>en_GB.UTF-8</option><option>ja_JP.UTF-8</option><option>de_DE.UTF-8</option></select>
+      <label>Timezone</label><select id="tz"><option>America/Los_Angeles</option><option>America/New_York</option><option>Europe/Berlin</option><option>Asia/Tokyo</option><option>UTC</option></select>
+      <div class="row"><button class="back" id="b">Back</button><button class="next" id="n">Next</button></div>`;
+    document.getElementById('loc').value=state.locale;document.getElementById('tz').value=state.tz;
+    document.getElementById('loc').onchange=e=>state.locale=e.target.value;
+    document.getElementById('tz').onchange=e=>state.tz=e.target.value;
+  } else if(steps[i]==='defaults'){
+    app.innerHTML=`<div class="dots">${dots}</div><div class="step-label">Safer defaults</div><h1>Surface calm</h1>
+      <label>Theme</label><select id="theme"><option>Abyss Teal</option><option>Moonlit Sand</option><option>Deep Ink</option></select>
+      <label>Updates</label><select id="up"><option value="security-auto">Auto security updates</option><option value="notify">Notify only</option><option value="manual">Fully manual</option></select>
+      <div class="row"><button class="back" id="b">Back</button><button class="next" id="n">Next</button></div>`;
+    document.getElementById('theme').value=state.theme;document.getElementById('up').value=state.updates;
+    document.getElementById('theme').onchange=e=>state.theme=e.target.value;
+    document.getElementById('up').onchange=e=>state.updates=e.target.value;
+  } else {
+    app.innerHTML=`<div class="dots">${dots}</div><div class="done"><h2>Cove ready, ${state.name}</h2>
+      <p class="summary">Locale <b>${state.locale}</b> · TZ <b>${state.tz}</b><br/>Theme <b>${state.theme}</b> · Updates <b>${state.updates}</b><br/><br/>This is a UI mock — wire it to real setup scripts in a later wave.</p>
+      <div class="row"><button class="back" id="b">Back</button><button class="next" id="n">Restart tour</button></div></div>`;
+  }
+  const n=document.getElementById('n'),b=document.getElementById('b');
+  if(n)n.onclick=()=>{if(steps[i]==='finish'){i=0;Object.assign(state,{name:'Captain',locale:'en_US.UTF-8',tz:'America/Los_Angeles',theme:'Abyss Teal',updates:'security-auto'})}else i++;render()};
+  if(b)b.onclick=()=>{i=Math.max(0,i-1);render()};
+}
+render();
+</script>
+</body></html>

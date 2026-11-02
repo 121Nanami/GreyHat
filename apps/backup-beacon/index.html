@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Backup Beacon</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+  body{margin:0;min-height:100vh;background:#111827;color:#e5e7eb;font-family:Outfit,sans-serif;display:grid;place-items:center;padding:1.5rem}
+  .panel{width:min(420px,100%);background:#1f2937;border-radius:16px;padding:1.5rem;box-shadow:0 20px 50px #0008}
+  h1{margin:0 0 .4rem;font-size:1.6rem} .sub{opacity:.6;margin:0 0 1.2rem;font-size:.9rem}
+  .slot{border:1px dashed #4b5563;border-radius:12px;padding:1rem;margin:.6rem 0;display:flex;justify-content:space-between;align-items:center}
+  .slot.ok{border-style:solid;border-color:#34d399;background:#064e3b33}
+  button{font:700 .85rem Outfit,sans-serif;border:0;background:#38bdf8;color:#0f172a;padding:.55rem .9rem;border-radius:8px;cursor:pointer}
+  .rule{font-family:'IBM Plex Mono',monospace;font-size:.8rem;opacity:.7;margin-top:1rem}
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>Backup Beacon</h1>
+  <p class="sub">3-2-1 checklist toy — mark copies you actually have.</p>
+  <div id="slots"></div>
+  <p class="rule" id="rule">3 copies · 2 media · 1 offsite</p>
+</div>
+<script>
+const SLOTS=[
+  {id:'primary',label:'Primary (this machine)'},
+  {id:'ext',label:'External drive / NAS'},
+  {id:'offsite',label:'Offsite / cloud / friend'},
+];
+const KEY='backupBeaconV1';
+let st=JSON.parse(localStorage.getItem(KEY)||'{}');
+function paint(){
+  const root=document.getElementById('slots');root.innerHTML='';
+  SLOTS.forEach(s=>{
+    const on=!!st[s.id];
+    const d=document.createElement('div');d.className='slot'+(on?' ok':'');
+    d.innerHTML=`<span>${s.label}</span>`;
+    const b=document.createElement('button');b.textContent=on?'Verified':'Mark present';
+    b.onclick=()=>{st[s.id]=!st[s.id];localStorage.setItem(KEY,JSON.stringify(st));paint()};
+    d.appendChild(b);root.appendChild(d);
+  });
+  const n=SLOTS.filter(s=>st[s.id]).length;
+  document.getElementById('rule').textContent=n>=3?'Beacon green — 3-2-1 shape looks good.':'3 copies · 2 media · 1 offsite  ('+n+'/3 marked)';
+}
+paint();
+</script>
+</body></html>

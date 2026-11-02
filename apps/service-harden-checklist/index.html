@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Service Harden Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#12141c;--ink:#eef1f8;--muted:#9aa3b5;--accent:#ff8b6a;--card:#1a1e2b}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:linear-gradient(180deg,#181b26,#0e1016);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;padding:2rem}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:.4rem}
+.sub{color:var(--muted);margin-bottom:1.25rem;max-width:40rem;line-height:1.5}
+table{width:min(860px,100%);border-collapse:collapse;background:var(--card)}
+th,td{text-align:left;padding:.75rem .9rem;border-bottom:1px solid #2a3144;vertical-align:top;font-size:.92rem}
+th{font-family:'Space Grotesk',sans-serif;color:var(--accent);font-weight:700;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}
+tr:hover td{background:#202536}
+code{font-size:.85em;color:#b7c4ff}
+.tag{display:inline-block;padding:.1rem .4rem;border:1px solid #3a4258;border-radius:2px;font-size:.72rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>Service harden checklist</h1>
+<p class="sub">Read-only guidance for reviewing enabled units on a custom spin. Pair with <code>systemctl list-unit-files --state=enabled</code> on a real host.</p>
+<table>
+<thead><tr><th>Unit / area</th><th>Ask</th><th>Bias</th></tr></thead>
+<tbody id="tb"></tbody>
+</table>
+<script>
+const rows=[
+  ['sshd.service','Do we need SSH on by default for a desktop ISO?','Prefer disabled on consumer images; document how to enable'],
+  ['bluetooth.service','Is BT required at first boot?','ok enabled; ensure agent prompts'],
+  ['cups.service','Printing stack pulled in?','disable if spin is portable-only'],
+  ['avahi-daemon.service','mDNS exposure on hostile LANs?','consider off in Cafe profile'],
+  ['docker.service','Rootful docker socket present?','omit from base ISO; optional pack'],
+  ['cronie / timers','Which timers fire unexpectedly?','keep only update + maintenance timers'],
+  ['getty@ttyN','How many gettys?','2–3 is plenty on desktop'],
+  ['NetworkManager','Who may rewrite DNS?','lock down dispatcher scripts'],
+];
+document.getElementById('tb').innerHTML=rows.map(([u,a,b])=>`<tr><td><code>${u}</code></td><td>${a}</td><td><span class="tag">${b}</span></td></tr>`).join('');
+</script>
+</body>
+</html>

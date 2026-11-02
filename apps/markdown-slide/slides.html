@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>demo.md</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+  :root { --bg:#0f1c18; --fg:#e8f5e9; --accent:#7CFFB2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:radial-gradient(1200px 600px at 20% 0%,#1b3a2f,var(--bg)); color:var(--fg); height:100vh; overflow:hidden; }
+  .slide { display:none; height:100vh; padding:8vh 10vw; }
+  .slide.active { display:flex; flex-direction:column; justify-content:center; animation:in .35s ease; }
+  @keyframes in { from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+  h1,h2,h3 { font-family:Fraunces,serif; font-weight:600; margin:0 0 .4em; letter-spacing:-.02em; }
+  h1 { font-size:clamp(2.4rem,6vw,4.5rem); color:var(--accent); }
+  h2 { font-size:clamp(1.8rem,4vw,3rem); }
+  p,li { font-size:clamp(1.1rem,2.2vw,1.5rem); line-height:1.5; max-width:40ch; }
+  code { background:#244438; padding:.1em .35em; border-radius:4px; }
+  .hud { position:fixed; bottom:1.2rem; right:1.5rem; opacity:.55; font-size:.9rem; }
+</style>
+</head>
+<body>
+<section class="slide active" data-i="0"><h1>GreyHat Inc</h1>
+<p>Wave one decks from markdown</p></section>
+<section class="slide" data-i="1"><h2>Why tiny tools?</h2>
+<ul>
+<li>Ship fast</li>
+<li>Learn in public</li>
+<li>Stay curious</li>
+</ul></section>
+<section class="slide" data-i="2"><h2>Next</h2>
+<p>Press → or click</p></section>
+<div class="hud"><span id="n">1</span> / 3 · ← →</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+function show(k){ i=(k+slides.length)%slides.length; slides.forEach((s,j)=>s.classList.toggle('active',j===i)); document.getElementById('n').textContent=i+1; }
+addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' ') show(i+1); if(e.key==='ArrowLeft') show(i-1); });
+addEventListener('click',()=>show(i+1));
+</script>
+</body>
+</html>

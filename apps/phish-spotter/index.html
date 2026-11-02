@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Phish Spotter Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600&family=Figtree:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#f6f1e7;--ink:#1e2430;--ok:#2a9d8f;--bad:#c1121f}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Figtree,sans-serif;
+    display:flex;justify-content:center;padding:2rem 1rem;
+    background-image:radial-gradient(#1e243012 1px,transparent 1px);background-size:18px 18px}
+  main{max-width:36rem;width:100%}
+  h1{font-family:Newsreader,serif;font-size:clamp(2rem,6vw,3rem);margin:0 0 .5rem}
+  .card{background:#fffdf8;border:1px solid #1e243022;padding:1.4rem;border-radius:4px;margin:1.2rem 0;box-shadow:0 10px 30px #1e243010}
+  .url{font-family:ui-monospace,monospace;font-size:1.05rem;word-break:break-all;background:#1e2430;color:#d8e2ef;padding:.9rem;border-radius:4px}
+  .btns{display:flex;gap:.6rem;margin-top:1rem}
+  button{flex:1;font:600 1rem Figtree,sans-serif;padding:.75rem;border:2px solid var(--ink);background:transparent;cursor:pointer;border-radius:4px}
+  button.safe:hover{background:var(--ok);color:#fff;border-color:var(--ok)}
+  button.phish:hover{background:var(--bad);color:#fff;border-color:var(--bad)}
+  .explain{margin-top:.8rem;font-size:.95rem;line-height:1.45}
+  .score{opacity:.7}
+</style>
+</head>
+<body>
+<main>
+  <h1>Phish Spotter</h1>
+  <p class="score">Consumer phishing awareness — is this URL safe or shady? <b id="sc">0</b>/<b id="tot">0</b></p>
+  <div class="card">
+    <div class="url" id="url"></div>
+    <div class="btns">
+      <button class="safe" id="safe">Looks safe</button>
+      <button class="phish" id="phish">Phishy</button>
+    </div>
+    <div class="explain" id="ex"></div>
+  </div>
+</main>
+<script>
+const Q=[
+  {url:'https://www.paypal.com/signin', safe:true, why:'Exact brand domain over HTTPS.'},
+  {url:'https://paypa1.com/secure-login', safe:false, why:'Homoglyph: “1” instead of “l” in paypal.'},
+  {url:'https://accounts.google.com', safe:true, why:'Legitimate Google accounts host.'},
+  {url:'https://google.com.security-check.ru/login', safe:false, why:'Brand is only a subdomain; real TLD is .ru.'},
+  {url:'https://github.com/login', safe:true, why:'Official GitHub login.'},
+  {url:'http://microsoft-support.xyz/update', safe:false, why:'Odd TLD, no HTTPS, support-scam pattern.'},
+  {url:'https://appleid.apple.com', safe:true, why:'Official Apple ID domain.'},
+  {url:'https://apple-id-verify.top/auth', safe:false, why:'Lookalike domain with sketchy TLD.'},
+];
+let i=0,sc=0;
+const url=document.getElementById('url'),ex=document.getElementById('ex');
+function show(){if(i>=Q.length){url.textContent='Quiz complete!';ex.textContent='Reload to practice again.';document.querySelector('.btns').style.display='none';return}
+  url.textContent=Q[i].url;ex.textContent='';document.getElementById('tot').textContent=Q.length;document.getElementById('sc').textContent=sc}
+function answer(safe){
+  const q=Q[i];const ok=safe===q.safe;if(ok)sc++;
+  ex.textContent=(ok?'✓ ':'✗ ')+q.why;document.getElementById('sc').textContent=sc;
+  setTimeout(()=>{i++;show()},1100);
+}
+document.getElementById('safe').onclick=()=>answer(true);
+document.getElementById('phish').onclick=()=>answer(false);
+show();
+</script>
+</body></html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gradient Weaver</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+  body{margin:0;min-height:100vh;font-family:Sora,sans-serif;color:#fff;display:grid;grid-template-rows:auto 1fr auto}
+  header{padding:1.5rem 2rem} h1{margin:0;font-size:clamp(1.6rem,4vw,2.4rem)}
+  #stage{min-height:50vh}
+  footer{padding:1rem 2rem 2rem;background:#0006;backdrop-filter:blur(8px)}
+  .row{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin-bottom:.8rem}
+  input[type=color]{width:48px;height:36px;border:0;background:none;cursor:pointer}
+  label{font-size:.8rem;opacity:.8}
+  pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;white-space:pre-wrap;margin:0;background:#0005;padding:.8rem;border-radius:8px}
+  button{font:600 .85rem Sora,sans-serif;border:0;background:#fff;color:#111;padding:.5rem .9rem;border-radius:8px;cursor:pointer}
+</style>
+</head>
+<body>
+<header><h1>Gradient Weaver</h1></header>
+<div id="stage"></div>
+<footer>
+  <div class="row">
+    <label>A <input type="color" id="a" value="#0f2027"/></label>
+    <label>B <input type="color" id="b" value="#203a43"/></label>
+    <label>C <input type="color" id="c" value="#2c5364"/></label>
+    <label>angle <input type="range" id="ang" min="0" max="360" value="135"/></label>
+    <button id="rand">Randomize</button>
+    <button id="copy">Copy CSS</button>
+  </div>
+  <pre id="css"></pre>
+</footer>
+<script>
+const stage=document.getElementById('stage'),css=document.getElementById('css');
+const a=document.getElementById('a'),b=document.getElementById('b'),c=document.getElementById('c'),ang=document.getElementById('ang');
+function paint(){
+  const g=`linear-gradient(${ang.value}deg, ${a.value}, ${b.value}, ${c.value})`;
+  stage.style.background=g;document.body.style.background=g;
+  css.textContent=`background: ${g};`;
+}
+[a,b,c,ang].forEach(el=>el.oninput=paint);
+document.getElementById('rand').onclick=()=>{
+  const r=()=>'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
+  a.value=r();b.value=r();c.value=r();ang.value=Math.floor(Math.random()*360);paint();
+};
+document.getElementById('copy').onclick=()=>navigator.clipboard.writeText(css.textContent);
+paint();
+</script>
+</body></html>

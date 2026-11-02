@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pixel Paint</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+  body{margin:0;min-height:100vh;background:#2b2b3c;color:#efe9d8;font-family:'Press Start 2P',monospace;
+    display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem}
+  h1{font-size:clamp(.7rem,2.5vw,1rem);margin:0}
+  .wrap{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  canvas{image-rendering:pixelated;background:#1a1a24;cursor:crosshair;box-shadow:8px 8px 0 #111;touch-action:none}
+  .tools{display:flex;flex-direction:column;gap:.6rem}
+  .sw{display:grid;grid-template-columns:repeat(4,28px);gap:4px}
+  .sw button{width:28px;height:28px;border:2px solid #efe9d8;padding:0;cursor:pointer}
+  .sw button.on{outline:2px solid #fff;outline-offset:2px}
+  button.act{font:8px 'Press Start 2P',monospace;padding:.6rem;background:#efe9d8;color:#1a1a24;border:0;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>PIXEL PAINT</h1>
+<div class="wrap">
+  <canvas id="c" width="320" height="320"></canvas>
+  <div class="tools">
+    <div class="sw" id="sw"></div>
+    <button class="act" id="clear">CLEAR</button>
+    <button class="act" id="save">SAVE PNG</button>
+  </div>
+</div>
+<script>
+const N=16,cvs=document.getElementById('c'),ctx=cvs.getContext('2d');
+ctx.imageSmoothingEnabled=false;
+const CELL=cvs.width/N;
+const palette=['#1a1a24','#efe9d8','#e63946','#f4a261','#e9c46a','#2a9d8f','#457b9d','#9b5de5','#00bbf9','#fee440','#f15bb5','#00f5d4','#8d99ae','#6a994e','#bc6c25','#ffffff'];
+let color=palette[2], painting=false;
+const grid=Array.from({length:N},()=>Array(N).fill(palette[0]));
+const sw=document.getElementById('sw');
+palette.forEach((p,i)=>{const b=document.createElement('button');b.style.background=p;if(i===2)b.classList.add('on');b.onclick=()=>{color=p;[...sw.children].forEach(x=>x.classList.remove('on'));b.classList.add('on')};sw.appendChild(b)});
+function draw(){for(let y=0;y<N;y++)for(let x=0;x<N;x++){ctx.fillStyle=grid[y][x];ctx.fillRect(x*CELL,y*CELL,CELL,CELL)}ctx.strokeStyle='#ffffff11';for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,cvs.height);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(cvs.width,i*CELL);ctx.stroke()}}
+function paint(e){const r=cvs.getBoundingClientRect();const x=Math.floor((e.clientX-r.left)/r.width*N),y=Math.floor((e.clientY-r.top)/r.height*N);if(x>=0&&y>=0&&x<N&&y<N){grid[y][x]=color;draw()}}
+cvs.onpointerdown=e=>{painting=true;cvs.setPointerCapture(e.pointerId);paint(e)};
+cvs.onpointermove=e=>{if(painting)paint(e)};
+cvs.onpointerup=()=>painting=false;
+document.getElementById('clear').onclick=()=>{for(let y=0;y<N;y++)for(let x=0;x<N;x++)grid[y][x]=palette[0];draw()};
+document.getElementById('save').onclick=()=>{const a=document.createElement('a');a.download='pixel.png';a.href=cvs.toDataURL();a.click()};
+draw();
+</script>
+</body></html>

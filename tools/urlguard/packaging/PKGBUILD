@@ -1,0 +1,25 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=urlguard
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Consumer-grade offline URL safety checker (phishing/heuristics, defensive only).'
+arch=('any')
+groups=('blackarch' 'blackarch-defensive' 'blackarch-misc')
+url='https://github.com/REPLACE_ME/urlguard'
+license=('MIT')
+depends=('python')
+# After publishing upstream, switch source to a tagged tarball or git URL.
+# For local dry-runs: place this PKGBUILD next to a urlguard/ checkout or
+# override source=() to a file:// or git+https:// URL you control.
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha512sums=('SKIP')
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  install -Dm 755 urlguard.py "$pkgdir/usr/bin/$pkgname"
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" README.md
+  install -Dm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

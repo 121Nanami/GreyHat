@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Spectrum Tuner</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  body{margin:0;min-height:100vh;background:#101820;color:#f2aa4c;font-family:'IBM Plex Mono',monospace;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1rem}
+  h1{font-family:'Archivo Black',sans-serif;color:#fee715;letter-spacing:-.02em;margin:0;font-size:clamp(1.5rem,5vw,2.5rem)}
+  canvas{width:min(560px,92vw);height:160px;background:#0a1016;border:2px solid #f2aa4c55}
+  .panel{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center}
+  input[type=range]{width:min(280px,70vw);accent-color:#fee715}
+  button{font:600 .9rem 'IBM Plex Mono',monospace;background:#fee715;color:#101820;border:0;padding:.6rem 1rem;cursor:pointer}
+  #hz{font-size:1.4rem;color:#fee715}
+</style>
+</head>
+<body>
+<h1>SPECTRUM TUNER</h1>
+<canvas id="c" width="560" height="160"></canvas>
+<div class="panel">
+  <span id="hz">440 Hz</span>
+  <input id="freq" type="range" min="55" max="1760" value="440"/>
+  <button id="tog">Play</button>
+</div>
+<script>
+const cvs=document.getElementById('c'),ctx=cvs.getContext('2d');
+let actx,osc,gain,anal,playing=false,raf;
+const freq=document.getElementById('freq'),hz=document.getElementById('hz');
+freq.oninput=()=>{hz.textContent=freq.value+' Hz';if(osc)osc.frequency.setTargetAtTime(+freq.value,actx.currentTime,0.01)};
+function setup(){
+  actx=new (window.AudioContext||window.webkitAudioContext)();
+  osc=actx.createOscillator();gain=actx.createGain();anal=actx.createAnalyser();
+  osc.type='sine';osc.frequency.value=+freq.value;gain.gain.value=0.0001;
+  osc.connect(gain);gain.connect(anal);anal.connect(actx.destination);osc.start();
+  anal.fftSize=256;
+}
+function draw(){
+  const data=new Uint8Array(anal.frequencyBinCount);anal.getByteFrequencyData(data);
+  ctx.fillStyle='#0a1016';ctx.fillRect(0,0,cvs.width,cvs.height);
+  const w=cvs.width/data.length;
+  for(let i=0;i<data.length;i++){
+    const h=data[i]/255*cvs.height;
+    ctx.fillStyle=`hsl(${40+i/2} 90% 55%)`;
+    ctx.fillRect(i*w,cvs.height-h,w-1,h);
+  }
+  raf=requestAnimationFrame(draw);
+}
+document.getElementById('tog').onclick=async()=>{
+  if(!actx)setup();
+  playing=!playing;
+  document.getElementById('tog').textContent=playing?'Stop':'Play';
+  gain.gain.cancelScheduledValues(actx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(playing?0.2:0.0001,actx.currentTime+0.08);
+  if(playing){cancelAnimationFrame(raf);draw()}
+};
+</script>
+</body></html>

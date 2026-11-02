@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>First-Boot Wizard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#10131a;--card:#171c27;--ink:#e8ecf4;--muted:#8b93a7;--accent:#7aa2ff;--ok:#5dcea0}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;display:grid;place-items:center;padding:1.5rem;background:linear-gradient(145deg,#0c0f16,#151b28 40%,#0a1622);color:var(--ink);font-family:'DM Sans',sans-serif}
+.shell{width:min(520px,100%);background:var(--card);border:1px solid #243049;padding:1.75rem;border-radius:4px;box-shadow:0 30px 80px #0008}
+.brand{font-family:'Instrument Serif',serif;font-size:1.85rem;margin-bottom:.25rem}
+.step-label{color:var(--muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
+h2{font-size:1.15rem;margin-bottom:.5rem}
+p{color:var(--muted);font-size:.92rem;line-height:1.5;margin-bottom:1rem}
+label{display:flex;gap:.6rem;align-items:flex-start;padding:.55rem .4rem;border-radius:3px;cursor:pointer}
+label:hover{background:#1e2636}
+input[type=radio],input[type=checkbox]{margin-top:.2rem;accent-color:var(--accent)}
+.nav{display:flex;justify-content:space-between;gap:.75rem;margin-top:1.4rem}
+button{font:inherit;border:0;padding:.65rem 1.1rem;border-radius:3px;cursor:pointer}
+button.primary{background:var(--accent);color:#0b1020;font-weight:600}
+button.ghost{background:transparent;color:var(--muted);border:1px solid #2a354d}
+.dots{display:flex;gap:.4rem;margin-bottom:1rem}
+.dots span{width:8px;height:8px;border-radius:50%;background:#2a354d}
+.dots span.on{background:var(--accent)}
+.done{color:var(--ok)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="brand">GreyHat Spin</div>
+  <div class="step-label" id="label">First boot · step 1</div>
+  <div class="dots" id="dots"></div>
+  <div id="pane"></div>
+  <div class="nav">
+    <button class="ghost" id="back" type="button">Back</button>
+    <button class="primary" id="next" type="button">Continue</button>
+  </div>
+</div>
+<script>
+const steps=[
+  {t:'Welcome',b:'This mock walks a new Ellen-themed spin through safe defaults. Nothing is written to disk.',html:'<p>Choose a calm first hour: network, privacy baseline, and wallpaper mood. You can revisit every choice later.</p>'},
+  {t:'Network posture',b:'How should outbound networking feel on day one?',html:`
+    <label><input type="radio" name="net" value="balanced" checked> Balanced — DHCP + firewall Home Quiet</label>
+    <label><input type="radio" name="net" value="strict"> Strict — Cafe Lockdown profile</label>
+    <label><input type="radio" name="net" value="offline"> Offline first — defer network until you say so</label>`},
+  {t:'Privacy defaults',b:'Pick the day-one privacy baseline.',html:`
+    <label><input type="checkbox" checked> Limit telemetry-ish optional services</label>
+    <label><input type="checkbox" checked> Clear-text HTTP warn in browser preset</label>
+    <label><input type="checkbox"> Prefer DNS-over-TLS stub (manual later)</label>`},
+  {t:'Look & feel',b:'Wallpaper pack mood for the greeter.',html:`
+    <label><input type="radio" name="wall" value="sea" checked> Ellen Deep Sea</label>
+    <label><input type="radio" name="wall" value="harbor"> Neon Harbor</label>
+    <label><input type="radio" name="wall" value="mono"> Mono Terminal</label>`},
+  {t:'Ready',b:'Summary of your mock choices.',html:'',done:true},
+];
+let i=0;const pane=document.getElementById('pane'),dots=document.getElementById('dots'),label=document.getElementById('label');
+function render(){
+  const s=steps[i];
+  label.textContent=`First boot · step ${i+1}/${steps.length}`;
+  dots.innerHTML=steps.map((_,j)=>`<span class="${j===i?'on':''}"></span>`).join('');
+  if(s.done){
+    const net=document.querySelector('input[name=net]:checked')?.value||'(skipped)';
+    const wall=document.querySelector('input[name=wall]:checked')?.value||'(skipped)';
+    pane.innerHTML=`<h2 class="done">${s.t}</h2><p>${s.b}</p><p>Network: <b>${net}</b><br>Wallpaper: <b>${wall}</b><br><br>Demo complete — re-run anytime. No system changes were made.</p>`;
+    document.getElementById('next').textContent='Finish';
+  }else{
+    pane.innerHTML=`<h2>${s.t}</h2><p>${s.b}</p>${s.html}`;
+    document.getElementById('next').textContent=i===steps.length-2?'Review':'Continue';
+  }
+  document.getElementById('back').disabled=i===0;
+}
+document.getElementById('back').onclick=()=>{if(i>0){i--;render()}};
+document.getElementById('next').onclick=()=>{if(i<steps.length-1){i++;render()}else{i=0;render()}};
+render();
+</script>
+</body>
+</html>

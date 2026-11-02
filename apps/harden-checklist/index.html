@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Harden Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;600;700&family=Shippori+Mincho:wght@600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#0e1a22;--foam:#e8f4f8;--teal:#1a6b6b;--coral:#e07a5f}
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:'Spline Sans',sans-serif;color:var(--ink);
+    background:linear-gradient(165deg,#0a1620 0%,#14303a 45%,#1a4a4a 100%);padding:2rem 1rem}
+  main{max-width:40rem;margin:0 auto}
+  h1{font-family:'Shippori Mincho',serif;color:var(--foam);font-size:clamp(1.8rem,5vw,2.6rem);margin:0 0 .4rem}
+  .sub{color:#a8c8d0;margin:0 0 1.5rem;line-height:1.45}
+  .progress{height:8px;background:#ffffff18;border-radius:99px;overflow:hidden;margin-bottom:1.2rem}
+  .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5eead4,var(--coral));transition:width .3s}
+  .item{background:#e8f4f810;border:1px solid #e8f4f822;border-radius:10px;padding:1rem 1.1rem;margin-bottom:.6rem;
+    display:flex;gap:.9rem;align-items:flex-start;cursor:pointer;transition:background .15s}
+  .item:hover{background:#e8f4f818}
+  .item.done{opacity:.55}
+  .item input{width:1.15rem;height:1.15rem;margin-top:.15rem;accent-color:var(--coral)}
+  .item h3{margin:0 0 .25rem;font-size:1rem;color:var(--foam)}
+  .item p{margin:0;font-size:.88rem;color:#9bb8c0;line-height:1.4}
+  .pct{color:var(--coral);font-weight:700}
+</style>
+</head>
+<body>
+<main>
+  <h1>Harden Checklist</h1>
+  <p class="sub">Safer consumer defaults for an Ellen Joe–themed BlackArch-style desktop. Local-only — nothing leaves this browser. Progress: <span class="pct" id="pct">0%</span></p>
+  <div class="progress"><i id="bar"></i></div>
+  <div id="list"></div>
+</main>
+<script>
+const ITEMS=[
+  {id:'auto-updates',t:'Enable automatic security updates',d:'Prefer unattended security patches; review major upgrades manually.'},
+  {id:'user-not-root',t:'Daily account is not root',d:'Use a normal user; escalate only when needed (sudo with a password).'},
+  {id:'disk-encrypt',t:'Full-disk encryption on laptops',d:'LUKS (or equivalent) so a stolen drive is not an open book.'},
+  {id:'firewall-on',t:'Host firewall default-deny inbound',d:'Allow only ports you intentionally expose.'},
+  {id:'ssh-keys',t:'SSH: keys only, no password logins',d:'Disable PasswordAuthentication; keep root login off.'},
+  {id:'browser-sep',t:'Separate browser profile for banking',d:'Cuts extension/session bleed into high-risk sites.'},
+  {id:'backup-3-2-1',t:'3-2-1 backups exist',d:'3 copies, 2 media types, 1 offsite/offline.'},
+  {id:'flatpak-perms',t:'Review Flatpak/app permissions',d:'Deny unused devices (mic, camera, home folder) per app.'},
+  {id:'secure-boot',t:'Secure Boot + measured boot where practical',d:'Raises the bar for bootkit persistence on consumer hardware.'},
+  {id:'phish-habits',t:'Phishing habits: verify domains, never reuse codes',d:'Pair with Phish Spotter practice quizzes.'},
+];
+const KEY='ellenHardenV1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+const list=document.getElementById('list');
+function paint(){
+  list.innerHTML='';
+  let done=0;
+  ITEMS.forEach(it=>{
+    const on=!!state[it.id]; if(on)done++;
+    const el=document.createElement('label');el.className='item'+(on?' done':'');
+    el.innerHTML=`<input type="checkbox" ${on?'checked':''}/><div><h3>${it.t}</h3><p>${it.d}</p></div>`;
+    el.querySelector('input').onchange=e=>{state[it.id]=e.target.checked;localStorage.setItem(KEY,JSON.stringify(state));paint()};
+    list.appendChild(el);
+  });
+  const pct=Math.round(done/ITEMS.length*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('bar').style.width=pct+'%';
+}
+paint();
+</script>
+</body></html>
