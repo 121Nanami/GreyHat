@@ -1,0 +1,11 @@
+/* Cove theme hook — loaded into chrome; sites stay untouched unless user injects customCss. */
+:root {
+  --cove-bg: #0f1419;
+  --cove-surface: #1a2332;
+  --cove-border: #2a3548;
+  --cove-text: #e7eef8;
+  --cove-muted: #8b9bb4;
+  --cove-accent: #3d9a8b;
+  --cove-warn: #c9a227;
+  --cove-danger: #c45c5c;
+}

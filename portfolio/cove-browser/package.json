@@ -1,0 +1,27 @@
+{
+  "name": "cove-browser",
+  "version": "0.1.0",
+  "description": "Chromium privacy browser scaffold — Tor proxy mode, strict defaults, Vivaldi-like panels (defensive / portfolio)",
+  "main": "main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "node tests/smoke.js",
+    "test": "node --test tests/*.test.js",
+    "check": "npm test && npm run smoke"
+  },
+  "keywords": [
+    "privacy",
+    "browser",
+    "electron",
+    "tor",
+    "defensive"
+  ],
+  "author": "GreyHatInc",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0"
+  }
+}

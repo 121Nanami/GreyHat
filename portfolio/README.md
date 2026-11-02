@@ -13,13 +13,14 @@ All work is **defensive or evaluative only** — no malware, exploits, phishing 
 | 3 | [repo-secrets-scan](./repo-secrets-scan/) | Defensive | Secrets-in-repo scanner with redaction, entropy pass, fixture suite |
 | 4 | [rag-eval-harness](./rag-eval-harness/) | AI eng | Stdlib TF-IDF RAG eval: Hit@K / MRR / nDCG on a labeled mini corpus |
 | 5 | [prompt-trace-cli](./prompt-trace-cli/) | AI eng | JSONL prompt/tool-call traces with timeline, stats, and tool-set diff |
+| 6 | [cove-browser](./cove-browser/) | Defensive | Electron Chromium privacy shell: Tor SOCKS5 mode, HTTPS-only, tracker stubs, sidebar panels |
 
 ## Quick smoke (all)
 
 From this directory:
 
 ```bash
-for d in phishurl-analyzer net-hygiene-auditor repo-secrets-scan rag-eval-harness prompt-trace-cli; do
+for d in phishurl-analyzer net-hygiene-auditor repo-secrets-scan rag-eval-harness prompt-trace-cli cove-browser; do
   echo "=== $d ==="
   (cd "$d" && bash smoke.sh)
 done
@@ -28,17 +29,19 @@ done
 From the repo root:
 
 ```bash
-for d in phishurl-analyzer net-hygiene-auditor repo-secrets-scan rag-eval-harness prompt-trace-cli; do
+for d in phishurl-analyzer net-hygiene-auditor repo-secrets-scan rag-eval-harness prompt-trace-cli cove-browser; do
   echo "=== $d ==="
   (cd "portfolio/$d" && bash smoke.sh)
 done
 ```
 
+Windows (Cove): `cd portfolio\cove-browser; .\smoke.ps1`
+
 ## Suggested LinkedIn / GitHub blurb
 
 **Short (LinkedIn About / Featured):**
 
-> Building defensive security + AI eng tools: offline phishing URL analysis, local network hygiene audits, secrets-in-repo scanning, RAG retrieval eval (Hit@K/MRR/nDCG), and prompt/tool-call tracing. Consumer-protection focus — explainable heuristics, no offensive tooling.
+> Building defensive security + AI eng tools: offline phishing URL analysis, local network hygiene audits, secrets-in-repo scanning, RAG retrieval eval (Hit@K/MRR/nDCG), prompt/tool-call tracing, and a Chromium privacy browser scaffold (Tor proxy mode). Consumer-protection focus — explainable heuristics, no offensive tooling.
 
 **GitHub profile README snippet:**
 
@@ -52,6 +55,7 @@ Defensive + AI engineering showcases — each with tests and a smoke script:
 - **repo-secrets-scan** — pattern + entropy secrets detection with redaction
 - **rag-eval-harness** — TF-IDF RAG eval harness (Hit@K, MRR, nDCG)
 - **prompt-trace-cli** — JSONL agent traces: timeline, stats, tool-set diff
+- **cove-browser** — Electron privacy browser scaffold (Tor SOCKS5, strict defaults)
 
 Philosophy: semi-usable CLIs you can demo in an interview, not toy one-liners.
 ```
@@ -63,6 +67,7 @@ Philosophy: semi-usable CLIs you can demo in an interview, not toy one-liners.
 - secretscan: `Secrets-in-repo scanner with curated patterns, entropy pass, and redacted output for CI/demo use.`
 - rageval: `Stdlib RAG retrieval eval harness — labeled corpus, TF-IDF baseline, Hit@K / MRR / nDCG.`
 - prompttrace: `Notebook-style prompt & tool-call trace CLI — JSONL sessions, timelines, stats, diffs.`
+- cove: `Chromium privacy browser scaffold — Tor SOCKS5 mode, HTTPS-only, tracker stubs. Not Tor Browser parity.`
 
 ## How these map to job talks
 
@@ -73,3 +78,4 @@ Philosophy: semi-usable CLIs you can demo in an interview, not toy one-liners.
 | “Catch secrets before they ship” | `secretscan testdata/fixture_repo` |
 | “How do you know RAG got better?” | `rageval` metrics table |
 | “Debug an agent that called the wrong tool” | `prompttrace show` + `diff` |
+| “Sketch a privacy browser architecture” | Cove README threat model + `npm run smoke` / `npm start` |

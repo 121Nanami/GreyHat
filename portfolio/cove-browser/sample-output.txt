@@ -1,0 +1,53 @@
+cove-browser — npm run smoke (headless)
+
+=== defaults ===
+{
+  "httpsOnly": true,
+  "blockTrackers": true,
+  "clearOnQuit": true,
+  "firstPartyIsolation": true,
+  "proxy": {
+    "enabled": false,
+    "host": "127.0.0.1",
+    "port": 9050
+  }
+}
+
+=== proxy config ===
+disabled → { mode: 'direct' }
+tor mode → {
+  mode: 'fixed_servers',
+  proxyRules: 'socks5://127.0.0.1:9050',
+  proxyBypassRules: '<-loopback>'
+}
+label → Tor mode → socks5://127.0.0.1:9050
+
+=== tracker stub decisions ===
+https://example.com/
+  → { cancel: false }
+https://www.google-analytics.com/g/collect
+  → { cancel: true, reason: 'tracker-stub', host: 'www.google-analytics.com' }
+http://example.com/login
+  → { cancel: false, redirectURL: 'https://example.com/login', reason: 'https-upgrade' }
+https://doubleclick.net/ad
+  → { cancel: true, reason: 'tracker-stub', host: 'doubleclick.net' }
+
+=== first-party isolation keys ===
+news.example.com → persist:fp-example.com
+
+=== settings persist ===
+wrote+loaded ...\cove-smoke-<pid>.json ok
+
+=== package shape ===
+ok main/main.js
+ok main/privacy.js
+ok main/proxy.js
+ok main/settings.js
+ok preload/preload.js
+ok renderer/index.html
+ok renderer/app.js
+ok renderer/styles.css
+ok themes/cove-dark.css
+ok README.md
+
+cove-browser smoke: PASS

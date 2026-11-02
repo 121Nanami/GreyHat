@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; connect-src 'self'"
+  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cove Browser</title>
+  <link rel="stylesheet" href="../themes/cove-dark.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="chrome" role="banner">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Tabs"></div>
+      <button type="button" class="icon-btn" id="btn-new-tab" title="New tab" aria-label="New tab">+</button>
+    </header>
+
+    <nav class="toolbar" aria-label="Navigation">
+      <button type="button" class="icon-btn" id="btn-back" title="Back" aria-label="Back">←</button>
+      <button type="button" class="icon-btn" id="btn-forward" title="Forward" aria-label="Forward">→</button>
+      <button type="button" class="icon-btn" id="btn-reload" title="Reload" aria-label="Reload">↻</button>
+      <button type="button" class="icon-btn" id="btn-home" title="Home" aria-label="Home">⌂</button>
+      <form id="nav-form" class="omnibox-wrap" autocomplete="off">
+        <input
+          id="omnibox"
+          class="omnibox"
+          type="text"
+          spellcheck="false"
+          placeholder="Search or enter address"
+          aria-label="Address bar"
+        />
+      </form>
+      <span id="proxy-badge" class="badge" title="Proxy status">Direct</span>
+      <span id="block-badge" class="badge muted" title="Blocked trackers this session">0 blocked</span>
+      <button type="button" class="icon-btn" id="btn-sidebar" title="Toggle sidebar panels" aria-label="Sidebar">▤</button>
+      <button type="button" class="icon-btn" id="btn-settings" title="Settings" aria-label="Settings">⚙</button>
+    </nav>
+
+    <div class="workspace">
+      <aside id="sidebar" class="sidebar hidden" aria-label="Web panels">
+        <div class="sidebar-head">
+          <strong>Panels</strong>
+          <span class="hint">Vivaldi-style stub</span>
+        </div>
+        <div id="panel-list" class="panel-list"></div>
+        <webview id="panel-view" class="panel-view" partition="persist:cove-panel" allowpopups></webview>
+      </aside>
+
+      <main id="views" class="views" role="main"></main>
+    </div>
+
+    <section id="settings" class="settings-drawer hidden" aria-label="Settings">
+      <div class="settings-inner">
+        <header class="settings-head">
+          <h1>Settings</h1>
+          <button type="button" class="icon-btn" id="btn-close-settings" aria-label="Close settings">×</button>
+        </header>
+        <p class="settings-lede">
+          Strict defaults for a privacy-minded Chromium shell. Tor mode expects a local SOCKS5
+          daemon at <code>127.0.0.1:9050</code> — Cove does not bundle Tor.
+        </p>
+
+        <label class="row">
+          <input type="checkbox" id="set-tor" />
+          <span>Tor proxy mode (SOCKS5)</span>
+        </label>
+        <div class="row twin">
+          <label>Host <input type="text" id="set-tor-host" /></label>
+          <label>Port <input type="number" id="set-tor-port" min="1" max="65535" /></label>
+        </div>
+
+        <label class="row">
+          <input type="checkbox" id="set-https" />
+          <span>HTTPS-only preference (upgrade HTTP)</span>
+        </label>
+        <label class="row">
+          <input type="checkbox" id="set-trackers" />
+          <span>Block known tracker hosts (stub list)</span>
+        </label>
+        <label class="row">
+          <input type="checkbox" id="set-fpi" />
+          <span>First-party isolation (session partitions)</span>
+        </label>
+        <label class="row">
+          <input type="checkbox" id="set-clear" />
+          <span>Clear cache &amp; storage on quit</span>
+        </label>
+
+        <label class="stack">
+          Home URL
+          <input type="url" id="set-home" />
+        </label>
+        <label class="stack">
+          Custom CSS (chrome hook)
+          <textarea id="set-css" rows="4" placeholder="/* e.g. .omnibox { font-size: 15px; } */"></textarea>
+        </label>
+
+        <div class="settings-actions">
+          <button type="button" class="primary" id="btn-save-settings">Save</button>
+          <span id="settings-status" class="hint" aria-live="polite"></span>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
