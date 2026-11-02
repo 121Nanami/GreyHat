@@ -1,0 +1,68 @@
+{
+  "documents": [
+    {
+      "id": "d1",
+      "text": "Phishing emails often impersonate banks and ask users to verify account credentials on lookalike domains."
+    },
+    {
+      "id": "d2",
+      "text": "Multi-factor authentication reduces account takeover risk when passwords are reused or leaked."
+    },
+    {
+      "id": "d3",
+      "text": "TF-IDF ranks documents by term frequency weighted by inverse document frequency for sparse retrieval."
+    },
+    {
+      "id": "d4",
+      "text": "nDCG and MRR are common ranking metrics used to evaluate information retrieval and RAG systems."
+    },
+    {
+      "id": "d5",
+      "text": "SSH private keys should use mode 600 and the .ssh directory should not be group or world readable."
+    },
+    {
+      "id": "d6",
+      "text": "A secrets scanner searches repositories for API keys, tokens, and high-entropy strings before release."
+    },
+    {
+      "id": "d7",
+      "text": "DNS resolvers in resolv.conf determine where a host sends recursive queries for domain names."
+    },
+    {
+      "id": "d8",
+      "text": "Prompt tracing records LLM messages and tool calls so engineers can debug agent behavior offline."
+    }
+  ],
+  "cases": [
+    {
+      "id": "q1",
+      "query": "How do phishing sites steal bank passwords?",
+      "relevant_ids": ["d1"]
+    },
+    {
+      "id": "q2",
+      "query": "What metrics evaluate RAG retrieval quality?",
+      "relevant_ids": ["d4"]
+    },
+    {
+      "id": "q3",
+      "query": "How should SSH key file permissions be set?",
+      "relevant_ids": ["d5"]
+    },
+    {
+      "id": "q4",
+      "query": "Find leaked API tokens in a git repo",
+      "relevant_ids": ["d6"]
+    },
+    {
+      "id": "q5",
+      "query": "Explain TF-IDF for document search",
+      "relevant_ids": ["d3"]
+    },
+    {
+      "id": "q6",
+      "query": "Debug tool calls from an AI agent session",
+      "relevant_ids": ["d8"]
+    }
+  ]
+}

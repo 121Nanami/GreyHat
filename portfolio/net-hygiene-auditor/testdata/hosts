@@ -1,0 +1,4 @@
+127.0.0.1 localhost
+::1 localhost
+# suspicious demo entry (do not use on real machines)
+203.0.113.50 paypal.example.local phishing-demo

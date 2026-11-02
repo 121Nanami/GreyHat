@@ -1,0 +1,8 @@
+# Sample URLs for offline demos — do not visit unknown hosts
+https://example.com/about
+https://user:pass@evil.example/login
+http://203.0.113.10/verify?account=1
+https://paypa1-secure.tk/signin
+https://bit.ly/3demo
+https://paypal.attacker.example/secure/update
+https://legit.example/path?redirect=https%3A%2F%2Fevil.example%2Flogin

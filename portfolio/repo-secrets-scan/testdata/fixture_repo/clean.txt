@@ -1,0 +1,2 @@
+Hello — no secrets here.
+api_key = "EXAMPLE_PLACEHOLDER_CHANGEME"

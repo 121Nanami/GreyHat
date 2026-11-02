@@ -1,0 +1,12 @@
+{"type": "session_start", "ts": "2026-11-02T01:00:00Z", "meta": {"model": "demo-llm", "purpose": "hygiene-assistant"}}
+{"type": "system", "ts": "2026-11-02T01:00:00Z", "content": "You are a defensive security assistant. Refuse offensive requests."}
+{"type": "user", "ts": "2026-11-02T01:00:01Z", "content": "Check whether this URL looks like phishing: https://paypa1.tk/login"}
+{"type": "assistant", "ts": "2026-11-02T01:00:02Z", "content": "I will analyze the URL offline with local heuristics."}
+{"type": "tool_call", "ts": "2026-11-02T01:00:02Z", "name": "phishurl.analyze", "args": {"url": "https://paypa1.tk/login"}}
+{"type": "tool_result", "ts": "2026-11-02T01:00:02Z", "name": "phishurl.analyze", "content": "{\"verdict\": \"dangerous\", \"score\": 65, \"findings\": [\"brand-lookalike\", \"tld\", \"credential-path\"]}"}
+{"type": "assistant", "ts": "2026-11-02T01:00:03Z", "content": "Verdict: dangerous. Brand lookalike of paypal on an abused TLD with a credential path."}
+{"type": "user", "ts": "2026-11-02T01:00:10Z", "content": "Also scan my repo for secrets under ./app"}
+{"type": "tool_call", "ts": "2026-11-02T01:00:11Z", "name": "secretscan.scan_tree", "args": {"root": "./app"}}
+{"type": "tool_result", "ts": "2026-11-02T01:00:11Z", "name": "secretscan.scan_tree", "content": "{\"hit_count\": 0, \"files_scanned\": 12}"}
+{"type": "assistant", "ts": "2026-11-02T01:00:12Z", "content": "No likely secrets found in ./app."}
+{"type": "session_end", "ts": "2026-11-02T01:00:13Z"}
